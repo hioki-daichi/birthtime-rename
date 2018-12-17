@@ -8,6 +8,34 @@ import (
 	"testing"
 )
 
+func Test_execute_errArgumentRequired(t *testing.T) {
+	expected := errArgumentRequired.Error()
+
+	err := execute([]string{})
+	if err == nil {
+		t.Fatal("unexpectedly err is nil")
+	}
+
+	actual := err.Error()
+	if actual != expected {
+		t.Errorf(`unexpected err: expected: "%s" actual: "%s"`, expected, actual)
+	}
+}
+
+func Test_execute_errOnlyOneArgumentCanBeSpecified(t *testing.T) {
+	expected := errOnlyOneArgumentCanBeSpecified.Error()
+
+	err := execute([]string{"a", "b"})
+	if err == nil {
+		t.Fatal("unexpectedly err is nil")
+	}
+
+	actual := err.Error()
+	if actual != expected {
+		t.Errorf(`unexpected err: expected: "%s" actual: "%s"`, expected, actual)
+	}
+}
+
 func Test_execute_noSuchFileOrDirectory(t *testing.T) {
 	expected := "lstat non-existent-path: no such file or directory"
 

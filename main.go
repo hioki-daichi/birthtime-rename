@@ -1,11 +1,17 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
+)
+
+var (
+	errArgumentRequired              = errors.New("argument required")
+	errOnlyOneArgumentCanBeSpecified = errors.New("only one argument can be specified")
 )
 
 func main() {
@@ -16,6 +22,14 @@ func main() {
 }
 
 func execute(args []string) error {
+	l := len(args)
+
+	if l == 0 {
+		return errArgumentRequired
+	} else if l > 1 {
+		return errOnlyOneArgumentCanBeSpecified
+	}
+
 	return filepath.Walk(args[0], walkFn)
 }
 
