@@ -15,8 +15,7 @@ var (
 )
 
 func main() {
-	err := execute(os.Args[1:])
-	if err != nil {
+	if err := execute(os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
 }
