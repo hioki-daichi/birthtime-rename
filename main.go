@@ -45,12 +45,6 @@ func walkFn(path string, fi os.FileInfo, err error) error {
 }
 
 func rename(path string, fi os.FileInfo) error {
-	fp, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-	defer fp.Close()
-
 	count := 1
 
 	for {
@@ -62,6 +56,12 @@ func rename(path string, fi os.FileInfo) error {
 			}
 			return err
 		}
+
+		fp, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer fp.Close()
 
 		_, err = io.Copy(newFp, fp)
 		if err != nil {
