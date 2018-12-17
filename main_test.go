@@ -61,6 +61,34 @@ func Test_execute(t *testing.T) {
 	}
 }
 
+func Test_rename_unreadable(t *testing.T) {
+	destdir, err := ioutil.TempDir("", "birthtime-rename")
+	if err != nil {
+		t.Fatalf("err %s", err)
+	}
+
+	path := filepath.Join(destdir, "unreadable")
+
+	expected := "open " + path + ": permission denied"
+
+	fp, err := os.OpenFile(path, os.O_CREATE, 0)
+	if err != nil {
+		t.Fatalf("err %s", err)
+	}
+
+	fi, err := fp.Stat()
+	if err != nil {
+		t.Fatalf("err %s", err)
+	}
+
+	err = rename(path, fi)
+
+	actual := err.Error()
+	if actual != expected {
+		t.Errorf(`unexpected err: expected: "%s" actual: "%s"`, expected, actual)
+	}
+}
+
 func copyTestdataToTempDir(t *testing.T) (string, func()) {
 	t.Helper()
 
