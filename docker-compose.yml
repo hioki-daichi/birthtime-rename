@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  golang:
+    container_name: birthtime-rename-golang-1.11.4-ubuntu-16.04
+    build: ./docker/golang/1.11.4
+    tty: true
+    volumes:
+      - ./:/go/src/github.com/hioki-daichi/birthtime-rename
