@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -48,7 +47,9 @@ func rename(path string, fi os.FileInfo) error {
 	count := 1
 
 	for {
-		newFp, err := os.OpenFile(genNewpath(path, fi, count), os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
+		newpath := genNewpath(path, fi, count)
+
+		_, err := os.OpenFile(newpath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
 		if err != nil {
 			if os.IsExist(err) {
 				count++
@@ -57,18 +58,7 @@ func rename(path string, fi os.FileInfo) error {
 			return err
 		}
 
-		fp, err := os.Open(path)
-		if err != nil {
-			return err
-		}
-		defer fp.Close()
-
-		_, err = io.Copy(newFp, fp)
-		if err != nil {
-			return err
-		}
-
-		err = os.Remove(path)
+		err = os.Rename(path, newpath)
 		if err != nil {
 			return err
 		}
