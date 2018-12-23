@@ -54,17 +54,22 @@ func Test_execute_noSuchFileOrDirectory(t *testing.T) {
 
 func Test_execute(t *testing.T) {
 	getBirthTimeFunc = func(fi os.FileInfo) time.Time {
-		return time.Unix(0, 0)
+		loc, err := time.LoadLocation("UTC")
+		if err != nil {
+			panic(err)
+		}
+
+		return time.Unix(0, 0).In(loc)
 	}
 
 	dirname, clean := copyTestdataToTempDir(t)
 	defer clean()
 
 	paths := []string{
-		filepath.Join(dirname, "testdata/a/1970-01-01-09-00-00-5447c6b.txt"),
-		filepath.Join(dirname, "testdata/a/1970-01-01-09-00-00-e6d9715.txt"),
-		filepath.Join(dirname, "testdata/a/b/1970-01-01-09-00-00-9d4b380.txt"),
-		filepath.Join(dirname, "testdata/a/b/1970-01-01-09-00-00-b551771.txt"),
+		filepath.Join(dirname, "testdata/a/1970-01-01-00-00-00-5447c6b.txt"),
+		filepath.Join(dirname, "testdata/a/1970-01-01-00-00-00-e6d9715.txt"),
+		filepath.Join(dirname, "testdata/a/b/1970-01-01-00-00-00-9d4b380.txt"),
+		filepath.Join(dirname, "testdata/a/b/1970-01-01-00-00-00-b551771.txt"),
 	}
 
 	err := execute([]string{"birthtime-rename", dirname})
