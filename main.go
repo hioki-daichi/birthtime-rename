@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -44,37 +43,29 @@ func walkFn(path string, fi os.FileInfo, err error) error {
 }
 
 func rename(path string, fi os.FileInfo) error {
-	count := 1
+	newpath := genNewpath(path, fi)
 
-	for {
-		newpath := genNewpath(path, fi, count)
-
-		_, err := os.OpenFile(newpath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
-		if err != nil {
-			if os.IsExist(err) {
-				count++
-				continue
-			}
-			return err
+	_, err := os.OpenFile(newpath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
+	if err != nil {
+		if os.IsExist(err) {
+			return nil
 		}
+		return err
+	}
 
-		err = os.Rename(path, newpath)
-		if err != nil {
-			return err
-		}
-
-		break
+	err = os.Rename(path, newpath)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func genNewpath(path string, fi os.FileInfo, count int) string {
+func genNewpath(path string, fi os.FileInfo) string {
 	birthTime := getBirthTime(fi)
 
 	fmtBtime := birthTime.Format("2006-01-02-15-04-05")
-	fmtCount := fmt.Sprintf("-%03d", count)
 	ext := filepath.Ext(path)
 
-	return filepath.Join(filepath.Dir(path), fmtBtime+fmtCount+ext)
+	return filepath.Join(filepath.Dir(path), fmtBtime+ext)
 }
