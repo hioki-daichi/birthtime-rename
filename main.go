@@ -73,14 +73,6 @@ func rename(path string, fi os.FileInfo) error {
 	)
 
 	if !dryRun {
-		_, err = os.OpenFile(newpath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
-		if err != nil {
-			if os.IsExist(err) {
-				return nil
-			}
-			return err
-		}
-
 		err = os.Rename(path, newpath)
 		if err != nil {
 			return err
@@ -101,10 +93,7 @@ func genHexStrFromFile(path string) (string, error) {
 	}
 	defer f.Close()
 
-	_, err = io.Copy(h, f)
-	if err != nil {
-		return "", err
-	}
+	_, _ = io.Copy(h, f)
 
 	return hex.EncodeToString(h.Sum(nil)), nil
 }
