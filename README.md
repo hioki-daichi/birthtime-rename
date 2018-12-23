@@ -8,12 +8,11 @@
 
 ## How to try
 
-```shell-session
-$ make build
-go build -o birthtime-rename -v
+Try using `./testdata/` in the repository.
 
-$ tree testdata/
-testdata/
+```shell
+$ tree ./testdata/
+./testdata/
 └── a
     ├── a1.txt
     ├── a2.txt
@@ -21,14 +20,54 @@ testdata/
         ├── b1.txt
         └── b2.txt
 
-$ ./birthtime-rename testdata/
+2 directories, 4 files
+```
 
-$ tree testdata/
-testdata/
+Build with `make build`.
+
+```shell
+$ make build
+go build -o birthtime-rename -v
+```
+
+Check with `--dry-run` option.
+
+```shell
+$ ./birthtime-rename --dry-run ./testdata/
+testdata/a/a1.txt -> testdata/a/2018-12-23-16-20-12-e6d9715.txt
+testdata/a/a2.txt -> testdata/a/2018-12-23-16-20-12-5447c6b.txt
+testdata/a/b/b1.txt -> testdata/a/b/2018-12-23-16-20-12-b551771.txt
+testdata/a/b/b2.txt -> testdata/a/b/2018-12-23-16-20-12-9d4b380.txt
+
+$ tree ./testdata/
+./testdata/
 └── a
-    ├── 2018-12-23-14-34-14-5447c6b.txt
-    ├── 2018-12-23-14-34-14-e6d9715.txt
+    ├── a1.txt
+    ├── a2.txt
     └── b
-        ├── 2018-12-23-14-34-14-9d4b380.txt
-        └── 2018-12-23-14-34-14-b551771.txt
+        ├── b1.txt
+        └── b2.txt
+
+2 directories, 4 files
+```
+
+Actually rename.
+
+```shell
+$ ./birthtime-rename ./testdata/
+testdata/a/a1.txt -> testdata/a/2018-12-23-16-20-12-e6d9715.txt
+testdata/a/a2.txt -> testdata/a/2018-12-23-16-20-12-5447c6b.txt
+testdata/a/b/b1.txt -> testdata/a/b/2018-12-23-16-20-12-b551771.txt
+testdata/a/b/b2.txt -> testdata/a/b/2018-12-23-16-20-12-9d4b380.txt
+
+$ tree ./testdata/
+./testdata/
+└── a
+    ├── 2018-12-23-16-20-12-5447c6b.txt
+    ├── 2018-12-23-16-20-12-e6d9715.txt
+    └── b
+        ├── 2018-12-23-16-20-12-9d4b380.txt
+        └── 2018-12-23-16-20-12-b551771.txt
+
+2 directories, 4 files
 ```
