@@ -1,7 +1,10 @@
 package main
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"errors"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -43,9 +46,12 @@ func walkFn(path string, fi os.FileInfo, err error) error {
 }
 
 func rename(path string, fi os.FileInfo) error {
-	newpath := genNewpath(path, fi)
+	newpath, err := genNewpath(path, fi)
+	if err != nil {
+		return err
+	}
 
-	_, err := os.OpenFile(newpath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
+	_, err = os.OpenFile(newpath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
 	if err != nil {
 		if os.IsExist(err) {
 			return nil
@@ -61,11 +67,35 @@ func rename(path string, fi os.FileInfo) error {
 	return nil
 }
 
-func genNewpath(path string, fi os.FileInfo) string {
+func genNewpath(path string, fi os.FileInfo) (string, error) {
 	birthTime := getBirthTime(fi)
 
 	fmtBtime := birthTime.Format("2006-01-02-15-04-05")
+
+	suffix, err := genSuffix(path)
+	if err != nil {
+		return "", err
+	}
+
 	ext := filepath.Ext(path)
 
-	return filepath.Join(filepath.Dir(path), fmtBtime+ext)
+	return filepath.Join(filepath.Dir(path), fmtBtime+"-"+suffix+ext), nil
+}
+
+func genSuffix(path string) (string, error) {
+	h := sha1.New()
+
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = io.Copy(h, f)
+	if err != nil {
+		return "", err
+	}
+
+	b := h.Sum(nil)
+
+	return hex.EncodeToString(b)[:7], nil
 }
