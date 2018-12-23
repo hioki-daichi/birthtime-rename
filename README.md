@@ -10,7 +10,7 @@
 
 Try using `./testdata/` in the repository.
 
-```shell
+```
 $ tree ./testdata/
 ./testdata/
 └── a
@@ -25,14 +25,14 @@ $ tree ./testdata/
 
 Build with `make build`.
 
-```shell
+```
 $ make build
 go build -o birthtime-rename -v
 ```
 
 Check with `--dry-run` option.
 
-```shell
+```
 $ ./birthtime-rename --dry-run ./testdata/
 testdata/a/a1.txt -> testdata/a/2018-12-23-16-20-12-e6d9715.txt
 testdata/a/a2.txt -> testdata/a/2018-12-23-16-20-12-5447c6b.txt
@@ -53,7 +53,7 @@ $ tree ./testdata/
 
 Actually rename.
 
-```shell
+```
 $ ./birthtime-rename ./testdata/
 testdata/a/a1.txt -> testdata/a/2018-12-23-16-20-12-e6d9715.txt
 testdata/a/a2.txt -> testdata/a/2018-12-23-16-20-12-5447c6b.txt
