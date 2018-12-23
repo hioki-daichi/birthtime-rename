@@ -11,7 +11,7 @@ import (
 func Test_execute_errArgumentRequired(t *testing.T) {
 	expected := errArgumentRequired.Error()
 
-	err := execute([]string{})
+	err := execute([]string{"birthtime-rename"})
 	if err == nil {
 		t.Fatal("unexpectedly err is nil")
 	}
@@ -25,7 +25,7 @@ func Test_execute_errArgumentRequired(t *testing.T) {
 func Test_execute_errOnlyOneArgumentCanBeSpecified(t *testing.T) {
 	expected := errOnlyOneArgumentCanBeSpecified.Error()
 
-	err := execute([]string{"a", "b"})
+	err := execute([]string{"birthtime-rename", "a", "b"})
 	if err == nil {
 		t.Fatal("unexpectedly err is nil")
 	}
@@ -39,7 +39,7 @@ func Test_execute_errOnlyOneArgumentCanBeSpecified(t *testing.T) {
 func Test_execute_noSuchFileOrDirectory(t *testing.T) {
 	expected := "lstat non-existent-path: no such file or directory"
 
-	err := execute([]string{"non-existent-path"})
+	err := execute([]string{"birthtime-rename", "non-existent-path"})
 
 	if err == nil {
 		t.Fatal("unexpectedly err is nil")
@@ -55,7 +55,7 @@ func Test_execute(t *testing.T) {
 	path, clean := copyTestdataToTempDir(t)
 	defer clean()
 
-	err := execute([]string{path})
+	err := execute([]string{"birthtime-rename", path})
 	if err != nil {
 		t.Fatalf("err %s", err)
 	}
