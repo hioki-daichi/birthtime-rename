@@ -57,10 +57,17 @@ func walkFn(path string, fi os.FileInfo, err error) error {
 }
 
 func rename(path string, fi os.FileInfo) error {
-	newpath, err := genNewpath(path, fi)
+	t := getBirthTime(fi)
+
+	hexStr, err := genHexStrFromFile(path)
 	if err != nil {
 		return err
 	}
+
+	newpath := filepath.Join(
+		filepath.Dir(path),
+		t.Format("2006-01-02-15-04-05")+"-"+hexStr[:7]+filepath.Ext(path),
+	)
 
 	if !dryRun {
 		_, err = os.OpenFile(newpath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
@@ -82,35 +89,19 @@ func rename(path string, fi os.FileInfo) error {
 	return nil
 }
 
-func genNewpath(path string, fi os.FileInfo) (string, error) {
-	birthTime := getBirthTime(fi)
-
-	fmtBtime := birthTime.Format("2006-01-02-15-04-05")
-
-	suffix, err := genSuffix(path)
-	if err != nil {
-		return "", err
-	}
-
-	ext := filepath.Ext(path)
-
-	return filepath.Join(filepath.Dir(path), fmtBtime+"-"+suffix+ext), nil
-}
-
-func genSuffix(path string) (string, error) {
+func genHexStrFromFile(path string) (string, error) {
 	h := sha1.New()
 
 	f, err := os.Open(path)
 	if err != nil {
 		return "", err
 	}
+	defer f.Close()
 
 	_, err = io.Copy(h, f)
 	if err != nil {
 		return "", err
 	}
 
-	b := h.Sum(nil)
-
-	return hex.EncodeToString(b)[:7], nil
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
