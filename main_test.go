@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func Test_execute_errArgumentRequired(t *testing.T) {
+func Test_execute_ErrArgumentRequired(t *testing.T) {
 	expected := errArgumentRequired.Error()
 
 	err := execute([]string{"birthtime-rename"})
@@ -24,7 +24,7 @@ func Test_execute_errArgumentRequired(t *testing.T) {
 	}
 }
 
-func Test_execute_errOnlyOneArgumentCanBeSpecified(t *testing.T) {
+func Test_execute_ErrOnlyOneArgumentCanBeSpecified(t *testing.T) {
 	expected := errOnlyOneArgumentCanBeSpecified.Error()
 
 	err := execute([]string{"birthtime-rename", "a", "b"})
@@ -38,7 +38,7 @@ func Test_execute_errOnlyOneArgumentCanBeSpecified(t *testing.T) {
 	}
 }
 
-func Test_execute_noSuchFileOrDirectory(t *testing.T) {
+func Test_execute_NoSuchFileOrDirectory(t *testing.T) {
 	expected := "lstat non-existent-path: no such file or directory"
 
 	err := execute([]string{"birthtime-rename", "non-existent-path"})
@@ -97,7 +97,7 @@ func Test_execute(t *testing.T) {
 	}
 }
 
-func Test_execute_unreadable(t *testing.T) {
+func Test_execute_Unreadable(t *testing.T) {
 	dirname, clean := copyTestdataToTempDir(t)
 	defer clean()
 
@@ -121,7 +121,7 @@ func Test_execute_unreadable(t *testing.T) {
 	}
 }
 
-func Test_execute_renameFailure(t *testing.T) {
+func Test_execute_RenameFailure(t *testing.T) {
 	expectedErr := errors.New("failed to rename")
 
 	renameFunc = func(oldpath, newpath string) error {
