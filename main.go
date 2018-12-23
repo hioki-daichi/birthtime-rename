@@ -23,11 +23,12 @@ var (
 var (
 	getBirthTimeFunc = getBirthTime
 	renameFunc       = os.Rename
+	logFatalFunc     = log.Fatal
 )
 
 func main() {
 	if err := execute(os.Args); err != nil {
-		log.Fatal(err)
+		logFatalFunc(err)
 	}
 }
 

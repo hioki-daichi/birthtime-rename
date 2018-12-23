@@ -10,6 +10,24 @@ import (
 	"time"
 )
 
+var actualErr error
+
+func Test_main_ErrArgumentRequired(t *testing.T) {
+	expected := errArgumentRequired
+
+	logFatalFunc = func(v ...interface{}) {
+		actualErr = v[0].(error)
+	}
+
+	os.Args = []string{"birthtime-rename"}
+
+	main()
+
+	if actualErr != expected {
+		t.Errorf(`unexpected err: expected: "%s" actual: "%s"`, expected, actualErr)
+	}
+}
+
 func Test_execute_ErrArgumentRequired(t *testing.T) {
 	expected := errArgumentRequired.Error()
 
