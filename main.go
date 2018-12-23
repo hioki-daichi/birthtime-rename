@@ -20,7 +20,10 @@ var (
 )
 
 // for testing
-var getBirthTimeFunc = getBirthTime
+var (
+	getBirthTimeFunc = getBirthTime
+	renameFunc       = os.Rename
+)
 
 func main() {
 	if err := execute(os.Args); err != nil {
@@ -73,7 +76,7 @@ func rename(path string, fi os.FileInfo) error {
 	)
 
 	if !dryRun {
-		err = os.Rename(path, newpath)
+		err = renameFunc(path, newpath)
 		if err != nil {
 			return err
 		}

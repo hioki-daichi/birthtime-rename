@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"io/ioutil"
 	"os"
@@ -117,6 +118,22 @@ func Test_execute_unreadable(t *testing.T) {
 	actual := err.Error()
 	if actual != expected {
 		t.Errorf(`unexpected err: expected: "%s" actual: "%s"`, expected, actual)
+	}
+}
+
+func Test_execute_renameFailure(t *testing.T) {
+	expectedErr := errors.New("failed to rename")
+
+	renameFunc = func(oldpath, newpath string) error {
+		return expectedErr
+	}
+
+	dirname, clean := copyTestdataToTempDir(t)
+	defer clean()
+
+	err := execute([]string{"birthtime-rename", dirname})
+	if err != expectedErr {
+		t.Errorf(`unexpected err: expected: "%s" actual: "%s"`, expectedErr, err)
 	}
 }
 
