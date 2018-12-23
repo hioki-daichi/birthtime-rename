@@ -91,6 +91,30 @@ func Test_execute(t *testing.T) {
 	}
 }
 
+func Test_execute_unreadable(t *testing.T) {
+	dirname, clean := copyTestdataToTempDir(t)
+	defer clean()
+
+	path := filepath.Join(dirname, "unreadable")
+
+	expected := "open " + path + ": permission denied"
+
+	_, err := os.OpenFile(path, os.O_CREATE, 0)
+	if err != nil {
+		t.Fatalf("err %s", err)
+	}
+
+	err = execute([]string{"birthtime-rename", dirname})
+	if err == nil {
+		t.Fatal("unexpectedly err is nil")
+	}
+
+	actual := err.Error()
+	if actual != expected {
+		t.Errorf(`unexpected err: expected: "%s" actual: "%s"`, expected, actual)
+	}
+}
+
 func copyTestdataToTempDir(t *testing.T) (string, func()) {
 	t.Helper()
 
