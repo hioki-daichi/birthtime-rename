@@ -19,6 +19,9 @@ var (
 	errOnlyOneArgumentCanBeSpecified = errors.New("only one argument can be specified")
 )
 
+// for testing
+var getBirthTimeFunc = getBirthTime
+
 func main() {
 	if err := execute(os.Args); err != nil {
 		log.Fatal(err)
@@ -57,7 +60,7 @@ func walkFn(path string, fi os.FileInfo, err error) error {
 }
 
 func rename(path string, fi os.FileInfo) error {
-	t := getBirthTime(fi)
+	t := getBirthTimeFunc(fi)
 
 	hexStr, err := genHexStrFromFile(path)
 	if err != nil {

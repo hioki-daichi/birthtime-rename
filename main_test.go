@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func Test_execute_errArgumentRequired(t *testing.T) {
@@ -52,12 +53,41 @@ func Test_execute_noSuchFileOrDirectory(t *testing.T) {
 }
 
 func Test_execute(t *testing.T) {
-	path, clean := copyTestdataToTempDir(t)
+	getBirthTimeFunc = func(fi os.FileInfo) time.Time {
+		return time.Unix(0, 0)
+	}
+
+	dirname, clean := copyTestdataToTempDir(t)
 	defer clean()
 
-	err := execute([]string{"birthtime-rename", path})
+	paths := []string{
+		filepath.Join(dirname, "testdata/a/1970-01-01-09-00-00-5447c6b.txt"),
+		filepath.Join(dirname, "testdata/a/1970-01-01-09-00-00-e6d9715.txt"),
+		filepath.Join(dirname, "testdata/a/b/1970-01-01-09-00-00-9d4b380.txt"),
+		filepath.Join(dirname, "testdata/a/b/1970-01-01-09-00-00-b551771.txt"),
+	}
+
+	err := execute([]string{"birthtime-rename", dirname})
 	if err != nil {
 		t.Fatalf("err %s", err)
+	}
+
+	for _, path := range paths {
+		if _, err = os.Stat(path); os.IsNotExist(err) {
+			t.Fatalf("Unexpectedly a file or directory did not exist at the path: %s", path)
+		}
+	}
+
+	// The result is the same even if it is executed twice.
+	err = execute([]string{"birthtime-rename", dirname})
+	if err != nil {
+		t.Fatalf("err %s", err)
+	}
+
+	for _, path := range paths {
+		if _, err = os.Stat(path); os.IsNotExist(err) {
+			t.Fatalf("Unexpectedly a file or directory did not exist at the path: %s", path)
+		}
 	}
 }
 
